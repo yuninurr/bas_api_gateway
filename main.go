@@ -1,105 +1,84 @@
 package main
 
 import (
-	auth "api_gateway/usecase"
-	"fmt"
+	// "apigateway/handler"
+	"api_gateway/handler"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	
-	login := auth.NewLogin()
+	r := gin.Default()
 
-	username := "admin"
-	password := "admin123"
+	authRoute := r.Group("/auth")
+  authRoute.POST("/login", handler.NewAutentifikasi().AutentifikasiAccount)
 
-	isAuthenticated := login.Authentication(username, password)
+	accountRoute := r.Group("/account")
+	accountRoute.GET("/get", handler.NewAccount().GetAccount)
+	accountRoute.POST("/create", handler.NewAccount().CreateAccount)
+	accountRoute.PATCH("/update/:id", handler.NewAccount().UpdateAccount)
+	accountRoute.DELETE("/delete/:id", handler.NewAccount().DeleteAccount)
+	accountRoute.POST("/balance", handler.NewAccount().BalanceAccount)
 
-	if isAuthenticated {
-		fmt.Println("Login successful")
-	} else {
-		fmt.Println("Invalid username or password")
-	}
+	transactionRoute := r.Group("/transaction")
+	transactionRoute.POST("/transfer-bank", handler.Transfer().TransferBank)
+
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "pong",
+		})
+	})
+	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // package main
 
 // import (
-//     "encoding/json"
-//     "fmt"
-//     "net/http"
-//     "project/usecase" // Pastikan path ini sesuai dengan struktur project Anda
+// 	"api_gateway/handler"
+
+// 	"github.com/gin-gonic/gin"
 // )
 
-// // LoginRequest struct untuk menyimpan data login
-// type LoginRequest struct {
-//     Username string `json:"username"`
-//     Password string `json:"password"`
-// }
-
-// // LoginResponse struct untuk respon login
-// type LoginResponse struct {
-//     Message string `json:"message"`
-//     Success bool   `json:"success"`
-// }
-
 // func main() {
-//     http.HandleFunc("/login", loginHandler)
-//     fmt.Println("Server is running on port 8080")
-//     http.ListenAndServe(":8080", nil)
+//   r := gin.Default()
+
+//   // account root 
+//   accountRoute := r.Group("/account")
+//   accountRoute.GET("/get", handler.NewAccount().GetAccount)
+//   accountRoute.POST("/create", handler.NewAccount().CreateAccount)
+//   accountRoute.DELETE("/delete/:id", handler.NewAccount().DeleteAccount)
+//   accountRoute.PATCH("/update/:id", handler.NewAccount().UpdateAccount)
+//   accountRoute.GET("/balance", handler.NewAccount().BalanceAccount)
+  
+ 
+//   r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+
+// //   r.GET("/ping", func(c *gin.Context) {
+// //     c.JSON(http.StatusOK, gin.H{
+// //       "message": "pong",
+// //     })
+// //   })
+//   r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 // }
 
-// func loginHandler(w http.ResponseWriter, r *http.Request) {
-//     if r.Method != http.MethodPost {
-//         http.Error(w, "Only POST method is allowed", http.StatusMethodNotAllowed)
-//         return
-//     }
+// // import (
+// // 	auth "api_gateway/usecase"
+// // 	"fmt"
+// // )
 
-//     var loginReq LoginRequest
-//     err := json.NewDecoder(r.Body).Decode(&loginReq)
-//     if err != nil {
-//         http.Error(w, "Invalid request body", http.StatusBadRequest)
-//         return
-//     }
+// // func main() {
+	
+// // 	login := auth.NewLogin()
 
-//     loginService := usecase.NewLogin()
-//     if loginService.Authenticate(loginReq.Username, loginReq.Password) {
-//         response := LoginResponse{
-//             Message: "Login successful",
-//             Success: true,
-//         }
-//         w.Header().Set("Content-Type", "application/json")
-//         json.NewEncoder(w).Encode(response)
-//     } else {
-//         response := LoginResponse{
-//             Message: "Invalid username or password",
-//             Success: false,
-//         }
-//         w.Header().Set("Content-Type", "application/json")
-//         json.NewEncoder(w).Encode(response)
-//     }
-// }
+// // 	username := "admin"
+// // 	password := "admin123"
+
+// // 	isAuthenticated := login.Authentication(username, password)
+
+// // 	if isAuthenticated {
+// // 		fmt.Println("Login successful")
+// // 	} else {
+// // 		fmt.Println("Invalid username or password")
+// // 	}
+// // }
