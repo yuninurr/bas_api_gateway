@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "./proto";
+
+service ServiceTransaction {
+	rpc Login(LoginRequest) returns (LoginResponse) {}
+}
+
+message LoginRequest {
+	string username = 1;
+	string password = 2;
+}
+
+message LoginData {
+	string token = 1;
+}
+
+message LoginResponse {
+	string message = 1;
+	repeated LoginData data= 2;
+}
